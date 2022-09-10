@@ -68,6 +68,7 @@ class DynamixelIO(object):
             self.port_name = port
             self.readback_echo = readback_echo
             self.ignored_errors = {}
+            self.resolution_divider = 1
         except SerialOpenError:
            raise SerialOpenError(port, baudrate)
 
@@ -416,6 +417,7 @@ class DynamixelIO(object):
             response = self.write(servo_id, DXL_RESOLUTION_DIVIDER, [divider])
             if response:
                 self.exception_on_error(response[4], servo_id, 'setting resolution divider to %d' % divider)
+                self.resolution_divider = divider
             return response
         else:
             raise UnsupportedFeatureError(model, DXL_RESOLUTION_DIVIDER)
@@ -1018,6 +1020,7 @@ class DynamixelIO(object):
             position = response[11] + (response[12] << 8)
             if position & 0x8000:
                 position += -0x10000
+            position = position * self.resolution_divider
             error = position - goal
             speed = response[13] + ( response[14] << 8)
             if speed > 1023: speed = 1023 - speed

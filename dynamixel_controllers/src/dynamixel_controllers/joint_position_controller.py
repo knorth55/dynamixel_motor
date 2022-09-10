@@ -56,6 +56,9 @@ class JointPositionController(JointController):
         JointController.__init__(self, dxl_io, controller_namespace, port_namespace)
         
         self.motor_id = rospy.get_param(self.controller_namespace + '/motor/id')
+        self.resolution_divider = rospy.get_param(self.controller_namespace + '/motor/resolution_divider', 1)
+        self.dxl_io.set_resolution_divider(self.motor_id, self.resolution_divider)
+
         self.initial_position_raw = rospy.get_param(self.controller_namespace + '/motor/init')
         self.min_angle_raw = rospy.get_param(self.controller_namespace + '/motor/min')
         self.max_angle_raw = rospy.get_param(self.controller_namespace + '/motor/max')

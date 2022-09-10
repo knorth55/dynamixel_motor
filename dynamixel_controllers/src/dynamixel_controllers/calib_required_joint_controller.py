@@ -73,7 +73,6 @@ class CalibRequiredJointController(JointPositionController):
         rate = rospy.Rate(50)
         while not rospy.is_shutdown():
             try:
-                init_pos = self.motor_states_for_init['position']
                 if abs(self.motor_states_for_init['load']) > self.detect_limit_load:
                     break
             except KeyError:
@@ -92,6 +91,7 @@ class CalibRequiredJointController(JointPositionController):
         if self.torque_limit is not None:
             self.set_torque_limit(self.torque_limit)
         motor_states_sub_for_init.unregister()
+        init_pos = self.motor_states_for_init['position']
 
         # Remember initial joint position
         diff = init_pos - self.initial_position_raw
